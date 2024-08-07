@@ -1,0 +1,23 @@
+.idea/
+
+*~
+*.swp
+*.swo
+*.tmp
+log/
+db/*.sqlite3
+db/*.sqlite3-journal
+.bundle/
+vendor/bundle
+tmp/
+public/assets/
+# Ignorar pastas de shared memory
+shm/
+
+# Ignorar pastas de write-ahead logging
+wal/
+*wal
+*shm
+
+*.sqlite3-shm
+*.sqlite3-wal
