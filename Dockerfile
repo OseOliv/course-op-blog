@@ -13,7 +13,6 @@ ENV RAILS_ENV="production" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development"
 
-
 # Throw-away build stage to reduce size of final image
 FROM base as build
 
@@ -36,7 +35,6 @@ RUN bundle exec bootsnap precompile app/ lib/
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
-
 # Final stage for app image
 FROM base
 
@@ -49,9 +47,12 @@ RUN apt-get update -qq && \
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /rails /rails
 
-# Run and own only the runtime files as a non-root user for security
-RUN useradd rails --create-home --shell /bin/bash && \
-    chown -R rails:rails db log storage tmp
+# Create necessary directories and set ownership
+RUN mkdir -p /rails/db /rails/log /rails/storage /rails/tmp && \
+    useradd rails --create-home --shell /bin/bash && \
+    chown -R rails:rails /rails/db /rails/log /rails/storage /rails/tmp
+
+# Switch to non-root user
 USER rails:rails
 
 # Entrypoint prepares the database.
